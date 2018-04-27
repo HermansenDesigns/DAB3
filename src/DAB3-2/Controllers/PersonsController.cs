@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAB32.Models;
+using DAB32.Models.Resources;
 
 namespace DAB3_2.Controllers
 {
@@ -14,10 +17,13 @@ namespace DAB3_2.Controllers
     public class PersonsController : Controller
     {
         private readonly F184DABH2Gr24Context _context;
+        private readonly IMapper _mapper;
 
-        public PersonsController(F184DABH2Gr24Context context)
+
+        public PersonsController(F184DABH2Gr24Context context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Persons
@@ -48,19 +54,63 @@ namespace DAB3_2.Controllers
 
         // PUT: api/Persons/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPersons([FromRoute] int id, [FromBody] Persons persons)
+        public async Task<IActionResult> PutPersons([FromRoute] int id, [FromBody] PersonCreationDto personCreation)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != persons.Id)
+            var toEdit = _context.Persons.SingleOrDefault(o => o.Id == id);
+
+            // Split name
+            var name = personCreation.Name.Split(' ');
+            StringBuilder middleNameBuilder = new StringBuilder();
+            // Make Middle Name
+            foreach (var s in name)
+                if (s != name[0] || s != name[name.Length - 1])
+                {
+                    middleNameBuilder.Append(s);
+                    if (s != name[name.Length - 2])
+                        middleNameBuilder.Append(" ");
+                }
+            var middleName = middleNameBuilder.ToString();
+
+
+            // Create new person
+            var person = new Persons
             {
-                return BadRequest();
+                Context = personCreation.Context,
+                Email = personCreation.Email,
+                FirstName = name[0],
+                MiddleName = middleName,
+                LastName = name[name.Length - 1],
+                PersonAddresses = new List<PersonAddresses>(),
+                PersonAddressTypes = new List<PersonAddressTypes>(),
+                PhoneNumbers = new List<PhoneNumbers>(),
+                PrimaryAddress = new PrimaryAddresses(),
+            };
+
+            foreach (var numbers in personCreation.PhoneNumberDtos)
+            {
+                person.PhoneNumbers.Add( new PhoneNumbers()
+                {
+                    Number = numbers.Number,
+                    Person = person,
+                    Usage = numbers.Type
+                });
             }
 
-            _context.Entry(persons).State = EntityState.Modified;
+            foreach (var secondaryAddress in personCreation.SecondaryAddressDtos)
+            {
+                person.PersonAddresses.Add(new Addresses()
+                {
+
+                });
+            }
+
+
+            _context.Entry<Persons>(toEdit).State = EntityState.Modified;
 
             try
             {
@@ -83,17 +133,21 @@ namespace DAB3_2.Controllers
 
         // POST: api/Persons
         [HttpPost]
-        public async Task<IActionResult> PostPersons([FromBody] Persons persons)
+        public async Task<IActionResult> PostPersons([FromBody] PersonCreationDto persons)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Persons.Add(persons);
+            var person = _mapper.Map<Persons>(persons);
+
+            _context.Persons.Add(person);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPersons", new { id = persons.Id }, persons);
+            var result = _mapper.Map<PersonDto>(person);
+
+            return CreatedAtAction("GetPersons", new { id = result.Id }, result);
         }
 
         // DELETE: api/Persons/5
