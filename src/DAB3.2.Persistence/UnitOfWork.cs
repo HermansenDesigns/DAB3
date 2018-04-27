@@ -9,6 +9,10 @@ namespace DAB2_2RDB
     public class UnitOfWork
     {
         public DbContext Context { get; set; }
+        public Repository<Person> Repository { get; set; }
+
+
+
 
         public UnitOfWork(DbContext context)
         {

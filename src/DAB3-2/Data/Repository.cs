@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,6 +57,13 @@ namespace DAB2_2RDB
 
             _context.Remove(t);
         }
+
+        public IEnumerable<T> ReadAll()
+        {
+            return (IEnumerable<T>) _context.ChangeTracker.Entries<T>();
+        }
+
+
 
         // Async Methods
 

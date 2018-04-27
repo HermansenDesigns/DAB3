@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAB2_2RDB
 {
-    public class Repository<T> where T : class
+    public class UnionRepository<T> where T : class
     {
         private readonly DbContext _context;
 
-        public Repository(DbContext context)
+        public UnionRepository(DbContext context)
         {
             _context = context;
         }
@@ -16,6 +19,7 @@ namespace DAB2_2RDB
         /// <summary>
         /// Syncronous method for Create
         /// </summary>
+        /// <param name="t">type <see cref="BaseEntity"/></param>
         /// <returns></returns>
         public void Create(T t)
         {
@@ -38,11 +42,19 @@ namespace DAB2_2RDB
         /// </summary>
         /// <param name="id">Id to update</param>
         /// <param name="t">Entity with modified values.</param>
-        public void Update(int id, T t)
+        public void Update(T old, T t)
         {
-            var toUpdate = _context.Find<T>(id);
-            toUpdate = t;
-            _context.Update(toUpdate);
+            try
+            {
+                if (old != t)
+                {
+                    _context.Add<T>(t);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         /// <summary>
@@ -73,9 +85,31 @@ namespace DAB2_2RDB
         /// Async method for Read
         /// </summary>
         /// <param name="id">Takes an id</param>
+        /// <returns><see cref="BaseEntity"/></returns>
         public async Task<T> ReadAsync(int id)
         {
             return await _context.FindAsync<T>(id);
+        }
+
+        /// <summary>
+        /// Async Update
+        /// Creates a new entity in DB if id is not equal <see cref="t"/>.Id and if neither is found in db.
+        /// </summary>
+        /// <param name="id">Id to update</param>
+        /// <param name="t">Entity with modified values.</param>
+        public async Task UpdateAsync(T old, T t)
+        {
+            try
+            {
+                if (old != t)
+                {
+                    await _context.AddAsync<T>(t);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
     }
 }

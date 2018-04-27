@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using DAB2_2RDB;
 using DAB32.Models;
 using DAB32.Models.Resources;
 using Microsoft.AspNetCore.Builder;
@@ -31,6 +32,8 @@ namespace DAB32
 
             services.AddDbContext<F184DABH2Gr24Context>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddSwaggerGen(c =>
             {
