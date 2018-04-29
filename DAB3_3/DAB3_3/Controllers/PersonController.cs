@@ -4,14 +4,20 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using DODB2_2N;
-using DODB2_2N.Model;
+using DAB3_3.Lib;
+using DAB3_3.Lib.Model;
 
 namespace DAB3_3.Controllers
 {
     public class PersonController : ApiController
     {
-        private readonly UnitOfWork uow =new UnitOfWork();
+        private readonly UnitOfWork uow;
+
+        public PersonController()
+        {
+            uow = new UnitOfWork();
+        }
+
         // GET: api/Person
         public IEnumerable<Person> Get()
         {

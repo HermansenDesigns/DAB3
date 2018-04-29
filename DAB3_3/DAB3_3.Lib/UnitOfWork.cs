@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Threading.Tasks;
+using DAB3_3.Lib.Model;
 using DocumentDB.Repository;
-using DODB2_2N.Model;
 using Microsoft.Azure.Documents.Client.TransientFaultHandling;
 
-
-namespace DODB2_2N
+namespace DAB3_3.Lib
 {
 
     public class UnitOfWork : IDisposable

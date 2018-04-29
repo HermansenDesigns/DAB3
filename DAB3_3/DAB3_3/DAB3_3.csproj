@@ -266,9 +266,9 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DODB2_2N\DODB2_2N.csproj">
-      <Project>{7f693251-bef5-4bea-929d-d960ef095071}</Project>
-      <Name>DODB2_2N</Name>
+    <ProjectReference Include="..\DAB3_3.Lib\DAB3_3.Lib.csproj">
+      <Project>{b491d03f-fec7-4ac5-ae9a-54c6a45fc2d4}</Project>
+      <Name>DAB3_3.Lib</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
