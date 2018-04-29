@@ -194,6 +194,7 @@
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Data\Models\AdressName.cs" />
     <Compile Include="Data\Models\City.cs" />
+    <Compile Include="Data\Models\DocumentDBRepository.cs" />
     <Compile Include="Data\Models\Name.cs" />
     <Compile Include="Data\Models\Person.cs" />
     <Compile Include="Data\Models\Primaryadress.cs" />
@@ -288,7 +289,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>60800</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

@@ -6,17 +6,23 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using DAB3_3.Data;
 using DAB3_3.Data.Models;
+using System.Net;
 
 namespace DAB3_3.Controllers
 {
     public class PersonController : ApiController
     {
-        private readonly UnitOfWork uow;
-
-        public PersonController()
+        //private readonly UnitOfWork uow;
+        public async Task<IEnumerable<Person>> GetPeople()
         {
-            uow = new UnitOfWork();
+            return await DocumentDBRepository<Person>.ReadAll(p => true);
         }
+
+        //public PersonController()
+        //{
+        //    uow = new UnitOfWork();
+        //}
+        /*
 
         // GET: api/Person
         public IEnumerable<Person> Get()
@@ -43,6 +49,6 @@ namespace DAB3_3.Controllers
         // DELETE: api/Person/5
         public void Delete(int id)
         {
-        }
+        }*/
     }
 }

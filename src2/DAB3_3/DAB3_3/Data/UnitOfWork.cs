@@ -22,6 +22,7 @@ namespace DAB3_3.Data
         {
             IDocumentDbInitializer init = new DocumentDbInitializer();
             string endpointUrl = ConfigurationManager.AppSettings["azure.documentdb.endpointUrl"];
+            //string endpointUrl = "https://localhost:8081";
             string authorizationKey = ConfigurationManager.AppSettings["azure.documentdb.authorizationKey"];
 
             //Get the DB client
