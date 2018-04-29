@@ -7,48 +7,46 @@ using System.Web.Http;
 using DAB3_3.Data;
 using DAB3_3.Data.Models;
 using System.Net;
-
+using System.Web.Http.Description;
+//this Solution is made with inspiration from :https://docs.microsoft.com/da-dk/azure/cosmos-db/sql-api-dotnetcore-get-started
 namespace DAB3_3.Controllers
 {
     public class PersonController : ApiController
     {
-        //private readonly UnitOfWork uow;
-        public async Task<IEnumerable<Person>> GetPeople()
-        {
-            return await DocumentDBRepository<Person>.ReadAll(p => true);
-        }
-
-        //public PersonController()
-        //{
-        //    uow = new UnitOfWork();
-        //}
-        /*
-
+        
         // GET: api/Person
-        public IEnumerable<Person> Get()
-        {
-            return uow.GetAllPersons();
+        [ResponseType(typeof(Person))]
+        public async Task<IEnumerable<Person>> GetPeople()
+        { 
+            return await DocumentDBRepository<Person>.Read(p => true);
         }
 
-        // GET: api/Person/5
-        public Person Get(string id)
+        [ResponseType(typeof(Person))]
+        public async Task<IHttpActionResult> GetById(string id)
         {
-            return uow.GetPerson(id);
+            var person = await DocumentDBRepository<Person>.Read(p => p.Id == id);
+
+            if (!person.Any())
+                return NotFound();
+
+            return Ok(person);
         }
 
-        // POST: api/Person
-        public void Post([FromBody]string value)
+        [ResponseType(typeof(Person))]
+        public async Task<IHttpActionResult> PutPerson(Person person)
         {
+            return await DocumentDBRepository<Person>.Update(person);
+        }
+        [ResponseType(typeof(Person))]
+        public async Task<IHttpActionResult> PostPerson(Person person)
+        {
+            return await DocumentDBRepository<Person>.Create(person);
         }
 
-        // PUT: api/Person/5
-        public void Put(int id, [FromBody]string value)
+        public async Task<IHttpActionResult> DeletePerson(string id)
         {
+            return await DocumentDBRepository<Person>.Delete(id);
         }
 
-        // DELETE: api/Person/5
-        public void Delete(int id)
-        {
-        }*/
     }
 }

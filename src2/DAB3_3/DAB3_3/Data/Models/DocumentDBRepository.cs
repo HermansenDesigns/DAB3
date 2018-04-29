@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http;
+using System.Web.Http.Results;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -79,7 +83,7 @@ namespace DAB3_3.Data.Models
 
             return results;
         }
-        public static async Task<IEnumerable<T>> ReadAll(Expression<Func<T, bool>> predicate)
+        public static async Task<IEnumerable<T>> Read(Expression<Func<T, bool>> predicate)
         {
             IDocumentQuery<T> query = client.CreateDocumentQuery<T>(
                     UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId))
@@ -93,6 +97,50 @@ namespace DAB3_3.Data.Models
             }
 
             return results;
+        }
+        public static async Task<IHttpActionResult> Update(Person person)
+        {
+            try
+            {
+                await client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, person.Id), person);
+                return new OkResult(new HttpRequestMessage());
+            }
+            catch (Exception)
+            {
+                return new NotFoundResult(new HttpRequestMessage());
+            }
+        }
+        public static async Task<IHttpActionResult> Create(Person person)
+        {
+            try
+            {
+                await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, person.Id));
+                return new BadRequestResult(new HttpRequestMessage());
+            }
+            catch (DocumentClientException de)
+            {
+                if (de.StatusCode == HttpStatusCode.NotFound)
+                {
+                    await client.CreateDocumentAsync(
+                        UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), person);
+                    return new OkResult(new HttpRequestMessage());
+                }
+
+                throw;
+            }
+
+        }
+        public static async Task<IHttpActionResult> Delete(string id)
+        {
+            try
+            {
+                await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id));
+                return new OkResult(new HttpRequestMessage());
+            }
+            catch (Exception)
+            {
+                return new NotFoundResult(new HttpRequestMessage());
+            }
         }
     }
 }
